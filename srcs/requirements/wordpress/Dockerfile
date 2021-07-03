@@ -12,6 +12,8 @@ RUN apt -y install php-fpm
 
 COPY tools/setup.sh .
 
+COPY tools/wordpress wp
+
 COPY tools/www.conf  /etc/php/7.3/fpm/pool.d/www.conf
 
 CMD [ "sh", "setup.sh" ]

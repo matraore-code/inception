@@ -19,13 +19,15 @@ services:
   mariadb:
     build : ./requirements/mariadb/
     restart : always
+    ports:
+        - "3306:3306"
     privileged : true
     volumes :
       - mariadb:/var/lib/mysql
     env_file :
       - .env
     networks :
-      -mariab-db-net
+      - mariadb-net
     container_name: "mariadb"
     image : "mariadb"
 
@@ -34,28 +36,30 @@ services:
     env_file : 
       - .env
     restart : always
+    ports : 
+      - "9000:9000"
     depends_on :
       - mariadb
     volumes :
-      -wordpress:/var/www/wordpress
+      - wordpress:/var/www/wordpress
     networks : 
       - php-net
-      - mariab-db-net
+      - mariadb-net
     container_name : "wordpress"
     image : "wordpress"
 
   networks :
     php-net:
-    mariab-db-net:
+    mariadb-net:
   
-  volumes:
-    mariadb:
+volumes:
+  mariadb:
       driver: local
       driver_opts:
         type: 'none'
         o: 'blind'
         device: '/home/matraore/data/mariadb'
-    wordpress:
+  wordpress:
       driver: local
       driver_opts:
         type: 'none'

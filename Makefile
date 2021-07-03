@@ -1,10 +1,10 @@
 SRCS = ./srcs/docker-compose.yml
 
 all :
-	sudo docker-compose -f ${SRC} build
+	 docker-compose -f ${SRCS} build
 
 up :
-	sudo docker-compose -f ${SRC} up -d --remove-orphans
+	docker-compose -f ${SRCS} up -d 
 
 start :
 	docker-compose -f ${SRCS} start
