@@ -3,7 +3,62 @@ version: "3.3"
 services:
   nginx:
     build : ./requirements/nginx/
+    restart : always
+    depends_on :
+      - wordpress
     ports:
       - "80:80"
       - "443:443"
+    networks:
+      - php-net
     container_name: "nginx"
+    image : "nginx"
+    volumes:
+      - wordpress:/var/www/wordpress
+  
+  mariadb:
+    build : ./requirements/mariadb/
+    restart : always
+    privileged : true
+    volumes :
+      - mariadb:/var/lib/mysql
+    env_file :
+      - .env
+    networks :
+      -mariab-db-net
+    container_name: "mariadb"
+    image : "mariadb"
+
+  wordpress :
+    build : ./requirements/wordpress/
+    env_file : 
+      - .env
+    restart : always
+    depends_on :
+      - mariadb
+    volumes :
+      -wordpress:/var/www/wordpress
+    networks : 
+      - php-net
+      - mariab-db-net
+    container_name : "wordpress"
+    image : "wordpress"
+
+  networks :
+    php-net:
+    mariab-db-net:
+  
+  volumes:
+    mariadb:
+      driver: local
+      driver_opts:
+        type: 'none'
+        o: 'blind'
+        device: '/home/matraore/data/mariadb'
+    wordpress:
+      driver: local
+      driver_opts:
+        type: 'none'
+        o: 'blind'
+        device: '/home/matraore/data/wordpress'
+
