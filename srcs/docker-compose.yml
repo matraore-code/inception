@@ -7,7 +7,6 @@ services:
     depends_on :
       - wordpress
     ports:
-      - "80:80"
       - "443:443"
     networks:
       - php-net
@@ -48,21 +47,21 @@ services:
     container_name : "wordpress"
     image : "wordpress"
 
-  networks :
-    php-net:
-    mariadb-net:
+networks :
+  php-net:
+  mariadb-net:
   
 volumes:
   mariadb:
       driver: local
       driver_opts:
         type: 'none'
-        o: 'blind'
+        o: 'bind'
         device: '/home/matraore/data/mariadb'
   wordpress:
       driver: local
       driver_opts:
         type: 'none'
-        o: 'blind'
+        o: 'bind'
         device: '/home/matraore/data/wordpress'
 
