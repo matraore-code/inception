@@ -1,66 +1,56 @@
 version: "3.3"
-    
+
+networks:
+    docker-network:
+        driver: bridge
+
 services:
-  nginx:
-    build : ./requirements/nginx/
-    restart : always
-    depends_on :
-      - wordpress
-    ports:
-      - "443:443"
-    networks:
-      - php-net
-    container_name: "nginx"
-    image : "nginx"
-    volumes:
-      - wordpress:/var/www/wordpress
-  
-  mariadb:
-    build : ./requirements/mariadb
-    restart : always
-    ports:
-        - "3306:3306"
-    privileged : true
-    volumes :
-      - mariadb:/var/lib/mysql/
-    env_file :
-      - .env
-    networks :
-      - mariadb-net
-    container_name: "mariadb"
-    image : "mariadb"
-
-  wordpress :
-    build : ./requirements/wordpress
-    env_file : 
-      - .env
-    restart : always
-    ports : 
-      - "9000:9000"
-    depends_on :
-      - mariadb
-    volumes :
-      - wordpress:/var/www/wordpress
-    networks : 
-      - php-net
-      - mariadb-net
-    container_name : "wordpress"
-    image : "wordpress"
-
-networks :
-  php-net:
-  mariadb-net:
-  
-volumes:
-  mariadb:
-      driver: local
-      driver_opts:
-        type: 'none'
-        o: 'bind'
-        device: '/home/matraore/data/mariadb'
-  wordpress:
-      driver: local
-      driver_opts:
-        type: 'none'
-        o: 'bind'
-        device: '/home/matraore/data/wordpress'
+    nginx:
+        build: ./requirements/nginx
+        image: nginx
+        container_name: nginx
+        depends_on:
+            - wordpress
+        restart: always
+        hostname: $DOMAIN_NAME
+        domainname: $DOMAIN_NAME
+        ports:
+            - 443:443
+        networks:
+            docker-network:
+                aliases:
+                    - $DOMAIN_NAME
+        volumes:
+            - type: bind
+              source: /home/matraore/data/wordpress
+              target: /www/
+    wordpress:
+        build: ./requirements/wordpress
+        image: wordpress
+        container_name: wordpress
+        restart: always
+        env_file: .env
+        environment:
+            - WP_DB_NAME=$DATABASE
+            - WP_DB_USER=$DB_USER
+            - WP_DB_PASS=$DB_PASSWORD
+        depends_on:
+            - mariadb
+        networks:
+            - docker-network
+        volumes:
+            - type: bind
+              source: /home/matraore/data/wordpress
+              target: /var/www/html/
+    mariadb:
+        build: ./requirements/mariadb
+        image: mariadb
+        container_name: mariadb
+        restart: always
+        env_file: .env
+        networks:
+            - docker-network
+        volumes:
+            - type: bind
+              source: /home/matraore/data/db
+              target: /var/lib/mysql

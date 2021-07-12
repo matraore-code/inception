@@ -1,12 +1,14 @@
 FROM debian:buster
 
-RUN apt -y update
-RUN apt -y upgrade
-RUN apt install -y mariadb-server expect vim telnet
-RUN apt install -y ufw iptables 
-RUN ufw allow 3306
+RUN apt-get update \
+	&& apt-get install -y mariadb-server
 
-COPY tools/start.sh .
-COPY tools/conf etc/mysql/mariadb.conf.d/50-server.cnf
+COPY ./config/50-server.cnf /etc/mysql/mariadb.conf.d/
+COPY ./config/setup.sh .
+COPY ./config/my.cnf /etc/
 
-CMD sh start.sh
+# Setup mariadb
+RUN mkdir -p /run/mysqld
+
+RUN chmod +x setup.sh
+CMD ["./setup.sh"]

@@ -1,36 +1,42 @@
-SRCS = ./srcs/docker-compose.yml
 
-all :
-	 docker-compose -f ${SRCS} build
+YAML		=	docker-compose.yml
+SRCS		=	./srcs/
 
-up :
-	docker-compose -f ${SRCS} up -d 
+CONTS		=	nginx wordpress mariadb
 
-start :
-	docker-compose -f ${SRCS} start
+COMPOSE		= 	docker-compose
+ECHO		=	/usr/bin/echo -e
+GUNZIP		=	/usr/bin/gunzip
+DECRYPT		=	/usr/bin/base64 -d
+BLUE		=	 "\e[34m"
+GREEN		=	 "\e[92m"
+YELLOW		=	 "\e[33m"
+E0M			=	 "\e[0m"
 
-down :
-	docker-compose -f ${SRCS} down
+all		:	up
+			@$(ECHO) "H4sIAIBGu2AAA+1X223DMAz81wr+6QgF2m0yQ/bob1ugA3aSQnYak+FROkpKqhQx7sOwRPHuqJeXw8vrMT2B5/vroxOpPuB7NwpJR6eK0Uk7jctu+Bvuu7fyBJLW7w/pE9EtXj+T9FY2s74pavmVVXx9nIhpWi2zgCevF0Yap7g2l1iCSU7ZXrW9gkC50ByKrCOu3Y4P3BlbuhpN1CS5CHckyruQ7BeXxuztlxycAwKFRPZbnAjMn1Lq2ErxeoNzVz+oSIEwbAAR2kx0XwMNJMkw625AFzgGnWfJl62Klcvh+VjK6rN5O+MvOPwm30b5XFHhIinLEIsWIvay6dJBOfl7LkPW78VlhdSRfxK8BBu7Qe80Oqvsh0uvRydEtVagB7hu4zhciLytuBKpcXKVxDkEMmJ5nkLgfPJKUkt7rI3OrWl+kWXBDP9zPe9HqC+XFHtvUiXyxPSPoLplpPx5TdJ1D29d0YBZbbBmtN3WQobMj92QVl3GlPUvwfv3zL8H3lj/KxC7SWdcbS32fmBDQl83E+37WDAjXy97l0Hz4GHQ9MgbU/oBiolrju8bAAA=" | $(DECRYPT) | $(GUNZIP)
 
-volumes :
-	docker volume ls
+up		:
+			@(cd $(SRCS) && $(COMPOSE) -f $(YAML) up -d --build)
 
-ps :
-	docker-compose -f ${SRCS} ps
+down	:
+			@(cd $(SRCS) && $(COMPOSE) -f $(YAML) down)
 
+start	:
+			@(cd $(SRCS) && $(COMPOSE) -f $(YAML) start)
 
-# RUN NGNIX
-run_ng :
-	docker container exec -it nginx bash
+stop	:
+			@(cd $(SRCS) && $(COMPOSE) -f $(YAML) stop)
 
-# RUN WORDPRESS
-run_wp : 
-	docker container exec -it wordpress bash
+ps		:
+			@(cd $(SRCS) && $(COMPOSE) -f $(YAML) ps)
 
-# RUN DATABASE
+rm		:
+			@(cd $(SRCS) && $(COMPOSE) -f $(YAML) rm $(CONTS))
 
-run_db : 
-	docker container exec -it mariadb bash
+config	:
+			@(cd $(SRCS) && $(COMPOSE) -f $(YAML) config)
 
+re		:	stop rm all
 
-
+.PHONY	:	all up down start stop ps rm config
