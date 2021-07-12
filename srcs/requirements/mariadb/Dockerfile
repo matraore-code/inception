@@ -7,7 +7,7 @@ COPY ./config/50-server.cnf /etc/mysql/mariadb.conf.d/
 COPY ./config/setup.sh .
 COPY ./config/my.cnf /etc/
 
-# Setup mariadb
+
 RUN mkdir -p /run/mysqld
 
 RUN chmod +x setup.sh

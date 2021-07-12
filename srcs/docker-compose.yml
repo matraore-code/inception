@@ -4,6 +4,20 @@ networks:
     docker-network:
         driver: bridge
 
+volumes:
+    db:
+        driver: local
+        driver_opts: 
+            o: 'bind'
+            type: 'none'
+            device: '/home/matraore/data/db'
+    websites:
+        driver: local
+        driver_opts: 
+            o: 'bind'
+            type: 'none'
+            device: '/home/matraore/data/wordpress'
+
 services:
     nginx:
         build: ./requirements/nginx
@@ -21,9 +35,7 @@ services:
                 aliases:
                     - $DOMAIN_NAME
         volumes:
-            - type: bind
-              source: /home/matraore/data/wordpress
-              target: /www/
+            - websites:/www/
     wordpress:
         build: ./requirements/wordpress
         image: wordpress
@@ -39,9 +51,7 @@ services:
         networks:
             - docker-network
         volumes:
-            - type: bind
-              source: /home/matraore/data/wordpress
-              target: /var/www/html/
+            - websites:/var/www/html/
     mariadb:
         build: ./requirements/mariadb
         image: mariadb
@@ -51,6 +61,4 @@ services:
         networks:
             - docker-network
         volumes:
-            - type: bind
-              source: /home/matraore/data/db
-              target: /var/lib/mysql
+            - db:/var/lib/mysql

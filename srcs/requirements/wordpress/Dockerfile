@@ -1,6 +1,5 @@
 FROM alpine:3.14
 
-# Update && Install (php7)
 RUN apk update  \
 	&& apk upgrade  
 RUN apk add vim php7-fpm php7-opcache php7-common php7-iconv php7-json php7-gd \
@@ -8,7 +7,6 @@ RUN apk add vim php7-fpm php7-opcache php7-common php7-iconv php7-json php7-gd \
     php7-posix php7-session php7-mcrypt php7-gettext php7-ldap php7-ctype php7-dom php7-curl \
     php7-xml php7-mbstring php7-cli php7-phar mariadb-client
 
-#add user www-data
 RUN addgroup -g 82 -S www-data;\
 	adduser -u 82 -D -S -G www-data www-data
 
