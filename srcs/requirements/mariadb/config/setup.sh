@@ -6,6 +6,7 @@ CREATE DATABASE $DATABASE;
 GRANT all privileges on $DATABASE.* to '$DB_USER'@'%' identified by '$DB_PASSWORD';
 GRANT all privileges on *.* to '$DB_USER_NAME'@'%' identified by '$DB_USER_PASS';
 USE $DATABASE;
+SET PASSWWORD FOR 'root'@'localhost' = PASSWORD('root123);
 FLUSH PRIVILEGES;
 EOF
 

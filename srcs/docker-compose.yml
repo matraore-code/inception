@@ -42,10 +42,6 @@ services:
         container_name: wordpress
         restart: always
         env_file: .env
-        environment:
-            - WP_DB_NAME=$DATABASE
-            - WP_DB_USER=$DB_USER
-            - WP_DB_PASS=$DB_PASSWORD
         depends_on:
             - mariadb
         networks:
